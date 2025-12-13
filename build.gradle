@@ -1,0 +1,76 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.5.7'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.namitar'
+version = '0.0.1-SNAPSHOT'
+description = 'Spring and Open AI'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(24)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	set('springAiVersion', "1.1.0")
+}
+
+dependencies {
+	// ----------------------------------------------------
+	// CORE DEPENDENCIES
+	// ----------------------------------------------------
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	runtimeOnly 'org.springframework.boot:spring-boot-docker-compose'
+
+	// ----------------------------------------------------
+	// SPRING AI - MODELS
+	// ----------------------------------------------------
+	implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+	implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
+
+	// ----------------------------------------------------
+	// SPRING AI - RAG (Retrieval-Augmented Generation)
+	// ----------------------------------------------------
+	implementation 'org.springframework.ai:spring-ai-rag'
+	implementation 'org.springframework.ai:spring-ai-starter-vector-store-qdrant'
+	implementation 'org.springframework.ai:spring-ai-advisors-vector-store'
+	implementation 'org.springframework.ai:spring-ai-tika-document-reader'
+
+	// ----------------------------------------------------
+	// SPRING AI - CHAT MEMORY
+	// ----------------------------------------------------
+	implementation 'org.springframework.ai:spring-ai-starter-model-chat-memory-repository-jdbc'
+	runtimeOnly 'com.h2database:h2'
+
+	// ----------------------------------------------------
+	// GRPC (for Qdrant)
+	// ----------------------------------------------------
+	implementation "io.grpc:grpc-netty-shaded:1.64.0"
+	implementation "io.grpc:grpc-protobuf:1.64.0"
+	implementation "io.grpc:grpc-stub:1.64.0"
+
+	// ----------------------------------------------------
+	// DEVELOPMENT & TESTING
+	// ----------------------------------------------------
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+	}
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
